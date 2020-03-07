@@ -39,6 +39,7 @@ public class BallController : MonoBehaviour{
     private void OnTriggerEnter2D(Collider2D collision){
         if(collision.gameObject.tag.Equals("Player")){
             float t = (this.transform.position.x - collision.gameObject.transform.position.x)/Globle.playerLength;
+            t = (t > 0)? Mathf.Clamp(t * t, -1.0f, 1.0f): Mathf.Clamp(-t * t, -1.0f, 1.0f);
             float v = this.speed.magnitude;
             this.speed = (1.0f - t) * BallController.leftReflect + (t + 1.0f) * BallController.rightReflect;
             this.speed.Normalize();
