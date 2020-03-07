@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour{
     public Sprite[] spriteList;
+    public GameObject ball;
     // Start is called before the first frame update
     private List<List<int>> levelData = null;
     private int levelBackground = 0;
     private GameObject background;
+    private List<GameObject> ballList;
     void Start(){
         Globle.readLevelData();
         // 获取关卡数据
@@ -17,7 +19,12 @@ public class GameController : MonoBehaviour{
         background = GameObject.Find("Background");
         background.GetComponent<SpriteRenderer>().sprite = spriteList[levelBackground];
 
-
+        // 创建弹球
+        GameObject newBall = (GameObject)Instantiate(ball, new Vector3(0, 0, 0), Quaternion.identity);
+        BallController newBallController = newBall.GetComponent<BallController>();
+        newBallController.speed = new Vector3(2, 2, 0);
+        ballList = new List<GameObject>();
+        ballList.Add(newBall);
         
     }
 
