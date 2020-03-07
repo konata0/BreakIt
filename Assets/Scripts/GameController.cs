@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour{
     private int levelBackground = 0;
     private GameObject background;
     private int ballNumber = 0;
+    private int brickNumber = 0;
     void Start(){
 
         Globle.readLevelData();
@@ -38,12 +39,22 @@ public class GameController : MonoBehaviour{
         this.brickHeight = r.bounds.extents.y * 2.0f;
         this.brickWidth = r.bounds.extents.x * 2.0f;
         Destroy(tempBrick);
+        this.brickNumber = 0;
+        for(int row = 0; row <= this.levelData.Count - 1; row++){
+            for(int col = 0; col <= this.levelData[row].Count - 1; col++){
+                int type = this.getBrickType(row, col);
+                if(type >= 0){
+                    this.createBrick(type, row, col);
+                }
+            }
+        }
              
     }
 
     // Update is called once per frame
     void Update(){
-        
+
+
     }
 
     // 获取砖块类型
@@ -58,6 +69,16 @@ public class GameController : MonoBehaviour{
         re = (re < -1)? -1: re;
         re = (re > brickList.Length - 1)? brickList.Length - 1: re;
         return re;
+    }
+
+    // 生成砖块
+    private void createBrick(int type, int row, int col){
+        float x = (((float)col) - ((float)Globle.col - 1.0f) / 2.0f) * this.brickWidth + Globle.brickCenter.x;
+        float y = (((float)Globle.row - 1.0f) / 2.0f - ((float)row)) * this.brickHeight + Globle.brickCenter.y;
+        GameObject newBrick = (GameObject)Instantiate(brick, new Vector3(x, y, 0), Quaternion.identity);   
+        BrickController brickController = newBrick.GetComponent<BrickController>();
+        brickController.type = type;
+        this.brickNumber += 1;
     }
 
     private void OnTriggerEnter2D(Collider2D collision){
