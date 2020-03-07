@@ -12,6 +12,8 @@ public class Globle : MonoBehaviour{
     public static int levelNumber = 1;
     public static int levelIndex = 0;
 
+    public static float playerLength;
+
     // 从JSON文件读取关卡数据
     public static void readLevelData(){
         StreamReader streamReader = new StreamReader(Application.dataPath + @"/GameData/LevelData.json");

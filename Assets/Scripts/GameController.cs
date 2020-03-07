@@ -22,7 +22,7 @@ public class GameController : MonoBehaviour{
         // 创建弹球
         GameObject newBall = (GameObject)Instantiate(ball, new Vector3(0, 0, 0), Quaternion.identity);
         BallController newBallController = newBall.GetComponent<BallController>();
-        newBallController.speed = new Vector3(2, 2, 0);
+        newBallController.speed = new Vector3(0, -3.0f, 0);
         ballList = new List<GameObject>();
         ballList.Add(newBall);
         
