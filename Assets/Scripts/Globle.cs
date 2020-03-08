@@ -13,6 +13,9 @@ public class Globle : MonoBehaviour{
     public static int levelIndex = 0;
     public static Vector3 brickCenter = new Vector3(0, 1.7f, 0);
 
+    public static float brickWidth = 0.88f;
+    public static float brickHeight = 0.24f;
+
     public static float playerLength;
 
     // 从JSON文件读取关卡数据

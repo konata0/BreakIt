@@ -7,8 +7,6 @@ public class GameController : MonoBehaviour{
     public Sprite[] brickList;
     public GameObject ball;
     public GameObject brick;
-    private float brickWidth;
-    private float brickHeight;
     // Start is called before the first frame update
     private List<List<int>> levelData = null;
     private int levelBackground = 0;
@@ -30,14 +28,15 @@ public class GameController : MonoBehaviour{
         // 创建弹球
         GameObject newBall = (GameObject)Instantiate(ball, new Vector3(0, 0, 0), Quaternion.identity);
         BallController newBallController = newBall.GetComponent<BallController>();
+        newBall.transform.SetParent(this.transform);
         newBallController.speed = new Vector3(0, -3.6f, 0);
         this.ballNumber = 1;
 
         // 创建砖块
         GameObject tempBrick = (GameObject)Instantiate(brick, new Vector3(0, 0, 0), Quaternion.identity);   
         Renderer r = tempBrick.GetComponent<Renderer>();
-        this.brickHeight = r.bounds.extents.y * 2.0f;
-        this.brickWidth = r.bounds.extents.x * 2.0f;
+        Globle.brickHeight = r.bounds.extents.y * 2.0f;
+        Globle.brickWidth = r.bounds.extents.x * 2.0f;
         Destroy(tempBrick);
         this.brickNumber = 0;
         for(int row = 0; row <= this.levelData.Count - 1; row++){
@@ -73,15 +72,24 @@ public class GameController : MonoBehaviour{
 
     // 生成砖块
     private void createBrick(int type, int row, int col){
-        float x = (((float)col) - ((float)Globle.col - 1.0f) / 2.0f) * this.brickWidth + Globle.brickCenter.x;
-        float y = (((float)Globle.row - 1.0f) / 2.0f - ((float)row)) * this.brickHeight + Globle.brickCenter.y;
+        float x = (((float)col) - ((float)Globle.col - 1.0f) / 2.0f) * Globle.brickWidth + Globle.brickCenter.x;
+        float y = (((float)Globle.row - 1.0f) / 2.0f - ((float)row)) * Globle.brickHeight + Globle.brickCenter.y;
         GameObject newBrick = (GameObject)Instantiate(brick, new Vector3(x, y, 0), Quaternion.identity);   
+        newBrick.transform.SetParent(this.transform);
         BrickController brickController = newBrick.GetComponent<BrickController>();
         brickController.type = type;
-        this.brickNumber += 1;
+        if(type != 7){
+            this.brickNumber += 1;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision){
         
+    }
+
+    // 击碎砖块
+    private void breakBrick(GameObject brick){
+        Destroy(brick);
+        this.brickNumber -= 1;
     }
 }

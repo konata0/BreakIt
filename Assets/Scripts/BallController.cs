@@ -44,6 +44,49 @@ public class BallController : MonoBehaviour{
             this.speed = (1.0f - t) * BallController.leftReflect + (t + 1.0f) * BallController.rightReflect;
             this.speed.Normalize();
             this.speed *= v;
-        }     
+        }else if(collision.gameObject.tag.Equals("Brick")){
+            float x = this.transform.position.x - collision.gameObject.transform.position.x;
+            float y = this.transform.position.y - collision.gameObject.transform.position.y;
+            float bx = Globle.brickWidth/2.0f;
+            float by = Globle.brickHeight/2.0f;
+            float l1 = x - bx + by;
+            float l2 = -x - bx + by;
+            float l3 = x + bx - by;
+            float l4 = -x + bx - by;
+            // 0123：上下左右
+            int t = -1;
+            if((y >= l1)&&(y >= l2)&&(y >= 0)){
+                t = 0;
+            }else if((y <= l3)&&(y <= l4)&&(y <= 0)){
+                t = 1;
+            }else if((y >= l3)&&(y <= l2)&&(x <= -bx + by)){
+                t = 2;
+            }else if((y <= l1)&&(y >= l4)&&(x >= bx - by)){
+                t = 3;
+            }else{
+                t = -1;
+            }
+            switch(t){
+                case 0:{
+                    this.speed.y = Mathf.Abs(this.speed.y);
+                    break;
+                }
+                case 1:{
+                    this.speed.y = -Mathf.Abs(this.speed.y);
+                    break;
+                }
+                case 2:{
+                    this.speed.x = -Mathf.Abs(this.speed.x);
+                    break;
+                }
+                case 3:{
+                    this.speed.x = Mathf.Abs(this.speed.x);
+                    break;
+                }
+                default:{
+                    break;
+                }
+            }  
+        }   
     }
 }

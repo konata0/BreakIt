@@ -103,7 +103,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!61 &1968046909925304430
 BoxCollider2D:
@@ -144,3 +144,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  spriteList:
+  - {fileID: 819581807205930985, guid: c21c82c12f3fab045ab851306723e9ba, type: 3}
+  - {fileID: -1163464561800054771, guid: c21c82c12f3fab045ab851306723e9ba, type: 3}
+  - {fileID: 8120797449598385850, guid: c21c82c12f3fab045ab851306723e9ba, type: 3}
+  - {fileID: -1715124594871698092, guid: c21c82c12f3fab045ab851306723e9ba, type: 3}
+  - {fileID: 8222420645925065664, guid: c21c82c12f3fab045ab851306723e9ba, type: 3}
+  - {fileID: 1180218034697511613, guid: c21c82c12f3fab045ab851306723e9ba, type: 3}
+  - {fileID: -2757276833463146388, guid: c21c82c12f3fab045ab851306723e9ba, type: 3}
+  - {fileID: 5250404372118099169, guid: c21c82c12f3fab045ab851306723e9ba, type: 3}
