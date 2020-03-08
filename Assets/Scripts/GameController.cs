@@ -7,6 +7,9 @@ public class GameController : MonoBehaviour{
     public Sprite[] brickList;
     public GameObject ball;
     public GameObject brick;
+    public GameObject redExplodeEffect;
+    public GameObject blueExplodeEffect;
+    public GameObject yellowExplodeEffect;
     // Start is called before the first frame update
     private List<List<int>> levelData = null;
     private int levelBackground = 0;
@@ -78,6 +81,8 @@ public class GameController : MonoBehaviour{
         newBrick.transform.SetParent(this.transform);
         BrickController brickController = newBrick.GetComponent<BrickController>();
         brickController.type = type;
+        brickController.row = row;
+        brickController.col = col;
         if(type != 7){
             this.brickNumber += 1;
         }
@@ -91,5 +96,37 @@ public class GameController : MonoBehaviour{
     private void breakBrick(GameObject brick){
         Destroy(brick);
         this.brickNumber -= 1;
+    }
+
+    // Blue爆炸
+    private void strikeBlue(int index){
+        int col = index % Globle.col;
+        int row = (index - col) / Globle.col;
+        float x = (((float)col) - ((float)Globle.col - 1.0f) / 2.0f) * Globle.brickWidth + Globle.brickCenter.x;
+        float y = (((float)Globle.row - 1.0f) / 2.0f - ((float)row)) * Globle.brickHeight + Globle.brickCenter.y;
+        GameObject newEffect = (GameObject)Instantiate(blueExplodeEffect, new Vector3(x, y, 0), Quaternion.identity);   
+        Destroy(newEffect, 1.2f);
+    }
+
+    // Red爆炸
+    private void strikeRed(int index){
+        int col = index % Globle.col;
+        int row = (index - col) / Globle.col;
+        float x = (((float)col) - ((float)Globle.col - 1.0f) / 2.0f) * Globle.brickWidth + Globle.brickCenter.x;
+        float y = (((float)Globle.row - 1.0f) / 2.0f - ((float)row)) * Globle.brickHeight + Globle.brickCenter.y;
+        GameObject newEffect = (GameObject)Instantiate(redExplodeEffect, new Vector3(x, y, 0), Quaternion.identity);   
+        Destroy(newEffect, 1.2f);
+        BroadcastMessage("redExplode", index, SendMessageOptions.DontRequireReceiver);
+    }
+
+    // Yellow爆炸
+    private void strikeYellow(int index){
+        int col = index % Globle.col;
+        int row = (index - col) / Globle.col;
+        float x = (((float)col) - ((float)Globle.col - 1.0f) / 2.0f) * Globle.brickWidth + Globle.brickCenter.x;
+        float y = (((float)Globle.row - 1.0f) / 2.0f - ((float)row)) * Globle.brickHeight + Globle.brickCenter.y;
+        GameObject newEffect = (GameObject)Instantiate(yellowExplodeEffect, new Vector3(x, y, 0), Quaternion.identity);   
+        Destroy(newEffect, 1.2f);
+        BroadcastMessage("yellowExpode", index, SendMessageOptions.DontRequireReceiver);
     }
 }

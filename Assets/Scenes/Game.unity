@@ -262,6 +262,12 @@ MonoBehaviour:
   - {fileID: 5250404372118099169, guid: c21c82c12f3fab045ab851306723e9ba, type: 3}
   ball: {fileID: 1086047757256091349, guid: 4bbe29ef09cc03f47a5d0e6150a119f5, type: 3}
   brick: {fileID: 1968046909925304429, guid: 279660d7243a9fa42b34bca1c4aafd46, type: 3}
+  redExplodeEffect: {fileID: 8435560228603589346, guid: c23811447a74ce644a58aef384dc2a9f,
+    type: 3}
+  blueExplodeEffect: {fileID: 3709151349468853666, guid: 49c65b5014bc7e14c9ae1e924947bf2f,
+    type: 3}
+  yellowExplodeEffect: {fileID: 2283110864547489035, guid: 307a02135d27bb44b944c16da2ffbd0e,
+    type: 3}
 --- !u!1 &1722023769
 GameObject:
   m_ObjectHideFlags: 0

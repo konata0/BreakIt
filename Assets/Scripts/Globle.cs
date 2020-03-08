@@ -9,7 +9,6 @@ public class Globle : MonoBehaviour{
     public static JsonData levelData;
     public static int row = 6;
     public static int col = 10;
-    public static int levelNumber = 1;
     public static int levelIndex = 0;
     public static Vector3 brickCenter = new Vector3(0, 1.7f, 0);
 

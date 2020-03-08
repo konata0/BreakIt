@@ -5,6 +5,8 @@ using UnityEngine;
 public class BrickController : MonoBehaviour{
 
     public int type = 0;
+    public int row;
+    public int col;
     public Sprite[] spriteList;
     private SpriteRenderer spriteRenderer;
     // Start is called before the first frame update
@@ -16,22 +18,28 @@ public class BrickController : MonoBehaviour{
         Renderer r = this.GetComponent<Renderer>();
         float width = r.bounds.extents.x * 2.0f;
         float height = r.bounds.extents.y * 2.0f;
-        this.GetComponent<BoxCollider2D>().size = new Vector2(width, height);       
+        this.GetComponent<BoxCollider2D>().size = new Vector2(width, height);    
     }
 
     // Update is called once per frame
     void Update(){
-        
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision){
         if(collision.gameObject.tag.Equals("Brick")){
             return;
         }
+        this.strike();
+    }
+
+    private void strike(){
         switch(this.type){
             // Blue 0
             case 0:{
+                this.type = -1;
                 SendMessageUpwards("breakBrick", this.gameObject, SendMessageOptions.DontRequireReceiver);
+                SendMessageUpwards("strikeBlue", this.row * Globle.col + this.col, SendMessageOptions.DontRequireReceiver);
                 break;
             }
             // Blue 1
@@ -54,14 +62,22 @@ public class BrickController : MonoBehaviour{
             }
             // Red
             case 4:{
+                this.type = -1;
+                SendMessageUpwards("breakBrick", this.gameObject, SendMessageOptions.DontRequireReceiver);
+                SendMessageUpwards("strikeRed", this.row * Globle.col + this.col, SendMessageOptions.DontRequireReceiver);
                 break;
             }
             // Yellow
             case 5:{
+                this.type = -1;
+                SendMessageUpwards("breakBrick", this.gameObject, SendMessageOptions.DontRequireReceiver);
+                SendMessageUpwards("strikeYellow", this.row * Globle.col + this.col, SendMessageOptions.DontRequireReceiver);
                 break;
             }
             // Green
             case 6:{
+                this.type = -1;
+                SendMessageUpwards("breakBrick", this.gameObject, SendMessageOptions.DontRequireReceiver);
                 break;
             }
             // Gray
@@ -72,6 +88,25 @@ public class BrickController : MonoBehaviour{
                 break;
             }
         }
-        
     }
+
+    private void redExplode(int index){
+        int redCol = index % Globle.col;
+        int redRow = (index - redCol) / Globle.col;
+        int dis = Mathf.Abs(this.row - redRow) + Mathf.Abs(this.col - redCol);
+        if( dis == 1){
+            this.strike();
+        }
+    }
+
+    private void yellowExpode(int index){
+        int yellowCol = index % Globle.col;
+        int yellowRow = (index - yellowCol) / Globle.col;
+        bool flag1 = (yellowCol == this.col);
+        bool flag2 = (yellowRow == this.row);
+        if((flag1 || flag2)&&(!(flag1&&flag2))){
+            this.strike();
+        }
+    }
+
 }
