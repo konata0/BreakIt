@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D playerRigidbody;
     private float height;
     private float width;
+    private int doubleTimes = 0;
     void Start(){
 
         initPosition = new Vector3(0, -2.3f, 0);
@@ -28,8 +29,9 @@ public class PlayerController : MonoBehaviour
         this.playerRigidbody = this.GetComponent<Rigidbody2D>();
         this.height = this.middleRenderer.bounds.extents.y * 2.0f;
         this.width = this.middleRenderer.bounds.extents.x * 2.0f;
+        this.doubleTimes = 0;
 
-        this.setLength(4);
+        this.setLength(2);
         
         
     }
@@ -60,5 +62,43 @@ public class PlayerController : MonoBehaviour
         // 设置碰撞体大小
         this.playerCollider.size = new Vector2(this.width, this.height);
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision){
+        if(collision.gameObject.tag.Equals("Item")){
+            int type = collision.gameObject.GetComponent<ItemController>().type;
+            switch(type){
+                case 0:{
+                    this.doubleTimes += 3;
+                    Destroy(collision.gameObject);
+                    break;
+                }
+                case 1:{
+                    Destroy(collision.gameObject);
+                    break;
+                }
+                case 2:{
+                    Destroy(collision.gameObject);
+                    break;
+                }
+                case 3:{
+                    Destroy(collision.gameObject);
+                    break;
+                }
+                case 4:{
+                    Destroy(collision.gameObject);
+                    break;
+                }
+                default:{
+                    Destroy(collision.gameObject);
+                    break;
+                }
+            }
+        }else if(collision.gameObject.tag.Equals("Ball")){
+            if(this.doubleTimes > 0){
+                this.doubleTimes -= 1;
+                SendMessageUpwards("doubleBall", collision.gameObject, SendMessageOptions.DontRequireReceiver);
+            }
+        }
     }
 }

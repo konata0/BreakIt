@@ -21,29 +21,26 @@ public class BallController : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-        if(this.transform.position.x > ballMoveBorderX){
+        if(this.transform.position.x > this.ballMoveBorderX){
             this.speed.x = -Mathf.Abs(this.speed.x);
         }
-        if(this.transform.position.x < -ballMoveBorderX){
+        if(this.transform.position.x < -this.ballMoveBorderX){
             this.speed.x = Mathf.Abs(this.speed.x);
         }
-        if(this.transform.position.y > ballMoveBorderY){
+        if(this.transform.position.y > this.ballMoveBorderY){
             this.speed.y = -Mathf.Abs(this.speed.y);
         }
-        if(this.transform.position.y < -ballMoveBorderY){
-            this.speed.y = Mathf.Abs(this.speed.y);
+        if(this.transform.position.y < -(this.screenY * 2 - this.ballMoveBorderY)){
+            SendMessageUpwards("dropBall", this.gameObject, SendMessageOptions.DontRequireReceiver);
         }
-        this.transform.Translate(speed * Time.deltaTime, Space.World);     
+        this.transform.Translate(this.speed * Time.deltaTime, Space.World);     
     }
 
     private void OnTriggerEnter2D(Collider2D collision){
         if(collision.gameObject.tag.Equals("Player")){
             float t = (this.transform.position.x - collision.gameObject.transform.position.x)/Globle.playerLength;
-            t = (t > 0)? Mathf.Clamp(t * t, -1.0f, 1.0f): Mathf.Clamp(-t * t, -1.0f, 1.0f);
             float v = this.speed.magnitude;
-            this.speed = (1.0f - t) * BallController.leftReflect + (t + 1.0f) * BallController.rightReflect;
-            this.speed.Normalize();
-            this.speed *= v;
+            this.speed = this.getReflectSpeed(t, v);
         }else if(collision.gameObject.tag.Equals("Brick")){
             float x = this.transform.position.x - collision.gameObject.transform.position.x;
             float y = this.transform.position.y - collision.gameObject.transform.position.y;
@@ -88,5 +85,12 @@ public class BallController : MonoBehaviour{
                 }
             }  
         }   
+    }
+
+    public Vector3 getReflectSpeed(float t, float v){
+        t = (t > 0)? Mathf.Clamp(t * t, -1.0f, 1.0f): Mathf.Clamp(-t * t, -1.0f, 1.0f);
+        Vector3 newSpeed = (1.0f - t) * BallController.leftReflect + (t + 1.0f) * BallController.rightReflect;
+        newSpeed.Normalize();
+        return newSpeed * v;
     }
 }

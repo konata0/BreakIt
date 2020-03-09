@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour{
     public GameObject redExplodeEffect;
     public GameObject blueExplodeEffect;
     public GameObject yellowExplodeEffect;
+    public GameObject item;
     // Start is called before the first frame update
     private List<List<int>> levelData = null;
     private int levelBackground = 0;
@@ -56,7 +57,6 @@ public class GameController : MonoBehaviour{
     // Update is called once per frame
     void Update(){
 
-
     }
 
     // 获取砖块类型
@@ -94,6 +94,24 @@ public class GameController : MonoBehaviour{
 
     // 击碎砖块
     private void breakBrick(GameObject brick){
+        if(Random.Range(0, 1.0f) < Globle.itemDropRate){
+            GameObject newItem = (GameObject)Instantiate(item, brick.transform.position, Quaternion.identity);
+            int type = 0;
+            float random = Random.Range(0, 5.0f);
+            if(random > 1.0f){
+                type = 1;
+            }
+            if(random > 2.0f){
+                type = 2;
+            }
+            if(random > 3.0f){
+                type = 3;
+            }
+            if(random > 4.0f){
+                type = 4;
+            }
+            newItem.GetComponent<ItemController>().type = type;
+        }
         Destroy(brick);
         this.brickNumber -= 1;
     }
@@ -128,5 +146,20 @@ public class GameController : MonoBehaviour{
         GameObject newEffect = (GameObject)Instantiate(yellowExplodeEffect, new Vector3(x, y, 0), Quaternion.identity);   
         Destroy(newEffect, 1.2f);
         BroadcastMessage("yellowExpode", index, SendMessageOptions.DontRequireReceiver);
+    }
+
+    // 复制Ball
+    private void doubleBall(GameObject orignalBall){
+        GameObject newBall = (GameObject)Instantiate(ball, orignalBall.transform.position, Quaternion.identity);
+        BallController newBallController = newBall.GetComponent<BallController>();
+        newBall.transform.SetParent(this.transform);
+        newBallController.speed = newBallController.getReflectSpeed(Random.Range(-1.0f, 1.0f), 3.6f);
+        this.ballNumber += 1;
+    }
+
+    // 球到达下边界
+    private void dropBall(GameObject ballToDestroy){
+        Destroy(ballToDestroy);
+        this.ballNumber -= 1;
     }
 }

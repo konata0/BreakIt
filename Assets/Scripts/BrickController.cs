@@ -27,10 +27,9 @@ public class BrickController : MonoBehaviour{
     }
 
     private void OnTriggerEnter2D(Collider2D collision){
-        if(collision.gameObject.tag.Equals("Brick")){
-            return;
+        if(collision.gameObject.tag.Equals("Ball")){
+            this.strike();
         }
-        this.strike();
     }
 
     private void strike(){

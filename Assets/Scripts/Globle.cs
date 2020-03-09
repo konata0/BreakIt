@@ -11,6 +11,7 @@ public class Globle : MonoBehaviour{
     public static int col = 10;
     public static int levelIndex = 0;
     public static Vector3 brickCenter = new Vector3(0, 1.7f, 0);
+    public static float itemDropRate = 0.1f;
 
     public static float brickWidth = 0.88f;
     public static float brickHeight = 0.24f;
