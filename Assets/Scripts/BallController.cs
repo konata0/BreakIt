@@ -93,4 +93,10 @@ public class BallController : MonoBehaviour{
         newSpeed.Normalize();
         return newSpeed * v;
     }
+
+    public void changeSpeed(float scale){
+        float v = Mathf.Clamp(this.speed.magnitude * scale, 1.8f, 7.2f);
+        this.speed.Normalize();
+        this.speed *= v;
+    }
 }

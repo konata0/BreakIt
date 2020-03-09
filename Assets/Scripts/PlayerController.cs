@@ -74,18 +74,26 @@ public class PlayerController : MonoBehaviour
                     break;
                 }
                 case 1:{
+                    if(this.length < 4){
+                        this.setLength(this.length + 1);
+                    }
                     Destroy(collision.gameObject);
                     break;
                 }
                 case 2:{
+                    SendMessageUpwards("changeBallSpeed", 0.5f, SendMessageOptions.DontRequireReceiver);
                     Destroy(collision.gameObject);
                     break;
                 }
                 case 3:{
+                    if(this.length > 1){
+                        this.setLength(this.length - 1);
+                    }
                     Destroy(collision.gameObject);
                     break;
                 }
                 case 4:{
+                    SendMessageUpwards("changeBallSpeed", 2.0f, SendMessageOptions.DontRequireReceiver);
                     Destroy(collision.gameObject);
                     break;
                 }

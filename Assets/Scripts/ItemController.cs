@@ -17,5 +17,8 @@ public class ItemController : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         this.transform.Translate(this.speed * Time.deltaTime, Space.World); 
+        if(this.transform.position.y < -10){
+            Destroy(this.gameObject);
+        }
     }
 }

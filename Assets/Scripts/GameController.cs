@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour{
         this.background.GetComponent<SpriteRenderer>().sprite = backgroundList[levelBackground];
 
         // 创建弹球
-        GameObject newBall = (GameObject)Instantiate(ball, new Vector3(0, 0, 0), Quaternion.identity);
+        GameObject newBall = (GameObject)Instantiate(ball, new Vector3(0, 0.6f, 0), Quaternion.identity);
         BallController newBallController = newBall.GetComponent<BallController>();
         newBall.transform.SetParent(this.transform);
         newBallController.speed = new Vector3(0, -3.6f, 0);
@@ -153,7 +153,8 @@ public class GameController : MonoBehaviour{
         GameObject newBall = (GameObject)Instantiate(ball, orignalBall.transform.position, Quaternion.identity);
         BallController newBallController = newBall.GetComponent<BallController>();
         newBall.transform.SetParent(this.transform);
-        newBallController.speed = newBallController.getReflectSpeed(Random.Range(-1.0f, 1.0f), 3.6f);
+        float v = orignalBall.GetComponent<BallController>().speed.magnitude;
+        newBallController.speed = newBallController.getReflectSpeed(Random.Range(-1.0f, 1.0f), v);
         this.ballNumber += 1;
     }
 
@@ -162,4 +163,11 @@ public class GameController : MonoBehaviour{
         Destroy(ballToDestroy);
         this.ballNumber -= 1;
     }
+
+    // 改变球速
+    private void changeBallSpeed(float scale){
+        BroadcastMessage("changeSpeed", scale, SendMessageOptions.DontRequireReceiver);
+    }
+
+    
 }
