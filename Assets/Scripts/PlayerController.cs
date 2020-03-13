@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private float height;
     private float width;
     private int doubleTimes = 0;
+    private bool gameState = true;
     void Start(){
 
         initPosition = new Vector3(0, -2.3f, 0);
@@ -39,9 +40,16 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update(){
         // 移动
-        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        newPosition = new Vector3(Mathf.Clamp(mousePosition.x, -playerMoveBorderX, playerMoveBorderX), initPosition.y, 0);
-        this.playerRigidbody.MovePosition(newPosition);
+        if(this.gameState){
+            mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            newPosition = new Vector3(Mathf.Clamp(mousePosition.x, -playerMoveBorderX, playerMoveBorderX), initPosition.y, 0);
+            this.playerRigidbody.MovePosition(newPosition);
+        }
+    }
+
+    // 停止移动
+    public void setGameState(bool flag){
+        this.gameState = flag;
     }
 
     // 设置长度

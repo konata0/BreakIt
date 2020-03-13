@@ -5,9 +5,14 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour{
 
+    public Animator startButton;
+    public Animator exitButton;
+
     void Start(){
         Globle.readLevelData();
         Globle.levelIndex = 0;
+        startButton.SetBool("hidden", false);
+        exitButton.SetBool("hidden", false);
     }
 
     public void StartGame(){

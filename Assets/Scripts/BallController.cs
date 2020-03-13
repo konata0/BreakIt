@@ -11,6 +11,7 @@ public class BallController : MonoBehaviour{
     private float ballMoveBorderY;
     private static Vector3 leftReflect = new Vector3(-1.0f, 0.3f, 0);
     private static Vector3 rightReflect = new Vector3(1.0f, 0.3f, 0);
+    private bool gameState = true;
     // Start is called before the first frame update
     void Start(){
         this.screenX = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
@@ -21,19 +22,21 @@ public class BallController : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-        if(this.transform.position.x > this.ballMoveBorderX){
-            this.speed.x = -Mathf.Abs(this.speed.x);
-        }
-        if(this.transform.position.x < -this.ballMoveBorderX){
-            this.speed.x = Mathf.Abs(this.speed.x);
-        }
-        if(this.transform.position.y > this.ballMoveBorderY){
-            this.speed.y = -Mathf.Abs(this.speed.y);
-        }
-        if(this.transform.position.y < -(this.screenY * 2 - this.ballMoveBorderY)){
-            SendMessageUpwards("dropBall", this.gameObject, SendMessageOptions.DontRequireReceiver);
-        }
-        this.transform.Translate(this.speed * Time.deltaTime, Space.World);     
+        if(this.gameState){
+            if(this.transform.position.x > this.ballMoveBorderX){
+                this.speed.x = -Mathf.Abs(this.speed.x);
+            }
+            if(this.transform.position.x < -this.ballMoveBorderX){
+                this.speed.x = Mathf.Abs(this.speed.x);
+            }
+            if(this.transform.position.y > this.ballMoveBorderY){
+                this.speed.y = -Mathf.Abs(this.speed.y);
+            }
+            if(this.transform.position.y < -(this.screenY * 2 - this.ballMoveBorderY)){
+                SendMessageUpwards("dropBall", this.gameObject, SendMessageOptions.DontRequireReceiver);
+            }
+            this.transform.Translate(this.speed * Time.deltaTime, Space.World);    
+        } 
     }
 
     private void OnTriggerEnter2D(Collider2D collision){
@@ -98,5 +101,9 @@ public class BallController : MonoBehaviour{
         float v = Mathf.Clamp(this.speed.magnitude * scale, 1.8f, 7.2f);
         this.speed.Normalize();
         this.speed *= v;
+    }
+
+    public void setGameState(bool flag){
+        this.gameState = flag;
     }
 }

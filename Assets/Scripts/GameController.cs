@@ -12,6 +12,8 @@ public class GameController : MonoBehaviour{
     public GameObject blueExplodeEffect;
     public GameObject yellowExplodeEffect;
     public GameObject item;
+    public Animator winButton;
+    public Animator lostButton;
     // Start is called before the first frame update
     private List<List<int>> levelData = null;
     private int levelBackground = 0;
@@ -55,18 +57,28 @@ public class GameController : MonoBehaviour{
     // Update is called once per frame
     void Update(){
         if(this.ballNumber == 0){
+            BroadcastMessage("setGameState", false, SendMessageOptions.DontRequireReceiver);
+            lostButton.SetBool("show", true);
+        }
+        if(this.brickNumber == 0){
+            BroadcastMessage("setGameState", false, SendMessageOptions.DontRequireReceiver);
+            winButton.SetBool("show", true);
+        }
+    }
+
+    public void clickWinOk(){
+        if(Globle.levelIndex < Globle.levelData.Count - 1){
+            Globle.levelIndex += 1;
+            SceneManager.LoadScene("Game");
+        }else{
             Globle.levelIndex = 0;
             SceneManager.LoadScene("Start");
         }
-        if(this.brickNumber == 0){
-            if(Globle.levelIndex < Globle.levelData.Count){
-                Globle.levelIndex += 1;
-                SceneManager.LoadScene("Game");
-            }else{
-                Globle.levelIndex = 0;
-                SceneManager.LoadScene("Start");
-            }
-        }
+    }
+
+    public void clickLostOk(){
+        Globle.levelIndex = 0;
+        SceneManager.LoadScene("Start");  
     }
 
     // 获取砖块类型
@@ -106,6 +118,7 @@ public class GameController : MonoBehaviour{
     private void breakBrick(GameObject brick){
         if(Random.Range(0, 1.0f) < Globle.itemDropRate){
             GameObject newItem = (GameObject)Instantiate(item, brick.transform.position, Quaternion.identity);
+            newItem.transform.SetParent(this.transform);
             int type = 0;
             float random = Random.Range(0, 5.0f);
             if(random > 1.0f){
