@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class GameController : MonoBehaviour{
@@ -18,9 +19,6 @@ public class GameController : MonoBehaviour{
     private int ballNumber = 0;
     private int brickNumber = 0;
     void Start(){
-
-        Globle.readLevelData();
-
         // 获取关卡数据
         this.levelData = Globle.getLevelData();
         this.levelBackground = (int)Mathf.Clamp(Globle.getLevelBackground(), 0, backgroundList.Length - 1);
@@ -56,7 +54,19 @@ public class GameController : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-
+        if(this.ballNumber == 0){
+            Globle.levelIndex = 0;
+            SceneManager.LoadScene("Start");
+        }
+        if(this.brickNumber == 0){
+            if(Globle.levelIndex < Globle.levelData.Count){
+                Globle.levelIndex += 1;
+                SceneManager.LoadScene("Game");
+            }else{
+                Globle.levelIndex = 0;
+                SceneManager.LoadScene("Start");
+            }
+        }
     }
 
     // 获取砖块类型
