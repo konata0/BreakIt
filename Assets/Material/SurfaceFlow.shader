@@ -2,14 +2,14 @@
     Properties{
         _Surface ("Surface Texture", 2D) = "gray" {}
         _Flow("Flow Texture", 2D) = "black"{}
-        _Route0("Route0(x, y, z, angle)", Vector) = (1, 1, -1, 45)
-        _Route1("Route1(x, y, z, angle)", Vector) = (1, 1, -1, 90)
-        _Route2("Route2(x, y, z, angle)", Vector) = (1, 1, -1, 135)
-        _Bump("Bump", Float) = 0
+        _Route0("Route0(x, y, z, delay)", Vector) = (1, 0, 0, 45)
+        _Route1("Route1(x, y, z, delay)", Vector) = (0, 1, 0, 90)
+        _Route2("Route2(x, y, z, delay)", Vector) = (0, 0, 1, 135)
         _Speed("Speed", Float) = 1
-        _Diffuse("Diffuse", Color) = (1.0, 1.0, 1.0, 1.0)
+        _Diffuse("Diffuse", Color) = (0.8, 0.8, 0.8, 1.0)
         _Specular("Specular", Color) = (1.0, 1.0, 1.0, 1.0)
-        _Gloss("Gloss", Range(1.0, 512)) = 10
+        _FlowColor("Flow Color", Color) = (0.6, 0.6, 0.6, 1.0)
+        _Gloss("Gloss", Range(1.0, 1024)) = 256
     }
     SubShader
     {
@@ -32,9 +32,10 @@
             float4 _Route0;
             float4 _Route1;
             float4 _Route2;
-            float _Bump;
+            float _Speed;
             fixed4 _Diffuse;
             fixed4 _Specular;
+            fixed4 _FlowColor;
             float _Gloss;
 
 
@@ -45,21 +46,18 @@
             };
 
             struct v2f{
-                float4 uv_u1v1 : TEXCOORD1;
-                float4 u2v2_u3v3 : TEXCOORD2;
+                float2 uv : TEXCOORD1;
                 float4 pos: SV_POSITION;
-                float3 worldNormal: TEXCOORD3;
-                float3 worldViewDir: TEXCOORD4;
-
-                float test:TEXCOORD5;
+                float3 worldNormal: TEXCOORD2;
+                float3 worldViewDir: TEXCOORD3;
+                float3 rotateWorldNormal0: TEXCOORD4;
+                float3 rotateWorldNormal1: TEXCOORD5;
+                float3 rotateWorldNormal2: TEXCOORD6;
             };
 
             v2f vert (appdata v){
 
                 v2f o;
-
-                float PI = 3.141592653589;
-                float2 flowUv = float2(0, 0);
                 // 设置一条平行于旋转平面的轴
                 float3 routeZ = normalize(_Route0.xyz);
                 int flag = step(0.7, dot(float3(1.0, 0, 0), routeZ));
@@ -67,44 +65,26 @@
                 routeX = normalize(cross(routeZ, routeX));
                 // 另一条平行于旋转平面的轴
                 float3 routeY = normalize(cross(routeZ, routeX));
-                float3 rotateWorldNormal = normalize(mul(float3x3(routeX, routeY, routeZ), v.normal));
-                // 计算该点在FLOW上的UV
-                flowUv.x = 1.0 - acos(rotateWorldNormal.z) / PI;
-                flag = step(0.01, dot(rotateWorldNormal.xy, rotateWorldNormal.xy));
-                rotateWorldNormal.xy = normalize(rotateWorldNormal.xy * flag + float2(1.0, 1.0) * (1.0 - flag));
-                flag = step(0, rotateWorldNormal.y);
-                flowUv.y = acos(rotateWorldNormal.x) * (flag - 0.5) / PI + 0.5;               
-                // 写入
-                o.uv_u1v1 = float4(TRANSFORM_TEX(v.uv, _Surface), TRANSFORM_TEX(flowUv, _Flow));
+                // 旋转坐标系下法线
+                o.rotateWorldNormal0 = normalize(mul(float3x3(routeX, routeY, routeZ), v.normal));
 
-                // 第二个
+                // 第二条
                 routeZ = normalize(_Route1.xyz);
                 flag = step(0.7, dot(float3(1.0, 0, 0), routeZ));
                 routeX = float3(1.0, 0, 0) * (1 - flag) + float3(0, 1.0, 0) * flag;
                 routeX = normalize(cross(routeZ, routeX));
                 routeY = normalize(cross(routeZ, routeX));
-                rotateWorldNormal = normalize(mul(float3x3(routeX, routeY, routeZ), v.normal));
-                flowUv.x = 1.0 - acos(rotateWorldNormal.z) / PI;
-                flag = step(0.01, dot(rotateWorldNormal.xy, rotateWorldNormal.xy));
-                rotateWorldNormal.xy = normalize(rotateWorldNormal.xy * flag + float2(1.0, 1.0) * (1.0 - flag));
-                flag = step(0, rotateWorldNormal.y);
-                flowUv.y = acos(rotateWorldNormal.x) * (flag - 0.5) / PI + 0.5;  
-                o.u2v2_u3v3.xy = TRANSFORM_TEX(flowUv, _Flow);
+                o.rotateWorldNormal1 = normalize(mul(float3x3(routeX, routeY, routeZ), v.normal));
 
-                // 第三个
+                // 第三条
                 routeZ = normalize(_Route2.xyz);
                 flag = step(0.7, dot(float3(1.0, 0, 0), routeZ));
                 routeX = float3(1.0, 0, 0) * (1 - flag) + float3(0, 1.0, 0) * flag;
                 routeX = normalize(cross(routeZ, routeX));
                 routeY = normalize(cross(routeZ, routeX));
-                rotateWorldNormal = normalize(mul(float3x3(routeX, routeY, routeZ), v.normal));
-                flowUv.x = 1.0 - acos(rotateWorldNormal.z) / PI;
-                flag = step(0.01, dot(rotateWorldNormal.xy, rotateWorldNormal.xy));
-                rotateWorldNormal.xy = normalize(rotateWorldNormal.xy * flag + float2(1.0, 1.0) * (1.0 - flag));
-                flag = step(0, rotateWorldNormal.y);
-                flowUv.y = acos(rotateWorldNormal.x) * (flag - 0.5) / PI + 0.5;  
-                o.u2v2_u3v3.zw = TRANSFORM_TEX(flowUv, _Flow);
+                o.rotateWorldNormal2 = normalize(mul(float3x3(routeX, routeY, routeZ), v.normal));
 
+                o.uv = TRANSFORM_TEX(v.uv, _Surface);
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject));
                 o.worldViewDir = normalize(_WorldSpaceCameraPos.xyz - mul(unity_ObjectToWorld, v.vertex).xyz);
@@ -115,11 +95,43 @@
 
             fixed4 frag (v2f o) : SV_Target{
                 // 表面纹理颜色
-                fixed3 surfaceColor = tex2D(_Surface, o.uv_u1v1.xy).rgb;
+                fixed3 surfaceColor = tex2D(_Surface, o.uv).rgb;
+                
                 // 表面流动
-                fixed3 flowColor = tex2D(_Flow, o.uv_u1v1.zw).rgb;
-                //flowColor += tex2D(_Flow, o.u2v2_u3v3.xy).rgb;
-                //flowColor += tex2D(_Flow, o.u2v2_u3v3.zw).rgb;
+                float PI = 3.141592653589;
+                float3 flowColor = float3(0, 0, 0);
+                float3 rotateWorldNormal = float3(0, 0, 0);
+                float2 flowUv;
+                float2 flowUvOffset;
+                int flag;
+                // 1
+                rotateWorldNormal = normalize(o.rotateWorldNormal0);
+                flowUv.y = 1.0 - acos(rotateWorldNormal.z) / PI;
+                flag = step(0.01, dot(rotateWorldNormal.xy, rotateWorldNormal.xy));
+                rotateWorldNormal.xy = normalize(rotateWorldNormal.xy * flag + float2(1.0, 1.0) * (1.0 - flag));
+                flag = step(0, rotateWorldNormal.y);
+                flowUv.x = acos(rotateWorldNormal.x) * (flag - 0.5) / PI + 0.5;  
+                flowUvOffset = float2( _Time[1] * _Speed + _Route0.w, 0);
+                flowColor += tex2D(_Flow, flowUv - flowUvOffset).rgb;
+                // 2
+                rotateWorldNormal = normalize(o.rotateWorldNormal1);
+                flowUv.y = 1.0 - acos(rotateWorldNormal.z) / PI;
+                flag = step(0.01, dot(rotateWorldNormal.xy, rotateWorldNormal.xy));
+                rotateWorldNormal.xy = normalize(rotateWorldNormal.xy * flag + float2(1.0, 1.0) * (1.0 - flag));
+                flag = step(0, rotateWorldNormal.y);
+                flowUv.x = acos(rotateWorldNormal.x) * (flag - 0.5) / PI + 0.5;  
+                flowUvOffset = float2( _Time[1] * _Speed + _Route1.w, 0);
+                flowColor += tex2D(_Flow, flowUv - flowUvOffset).rgb;
+                // 3
+                rotateWorldNormal = normalize(o.rotateWorldNormal2);
+                flowUv.y = 1.0 - acos(rotateWorldNormal.z) / PI;
+                flag = step(0.01, dot(rotateWorldNormal.xy, rotateWorldNormal.xy));
+                rotateWorldNormal.xy = normalize(rotateWorldNormal.xy * flag + float2(1.0, 1.0) * (1.0 - flag));
+                flag = step(0, rotateWorldNormal.y);
+                flowUv.x = acos(rotateWorldNormal.x) * (flag - 0.5) / PI + 0.5;  
+                flowUvOffset = float2( _Time[1] * _Speed + _Route2.w, 0);
+                flowColor += tex2D(_Flow, flowUv - flowUvOffset).rgb;
+
                 // 环境光
                 fixed3 ambient = UNITY_LIGHTMODEL_AMBIENT.xyz;
                 // 漫反射
@@ -129,11 +141,13 @@
                 fixed3 halfDir = normalize(worldLight + o.worldViewDir);
                 fixed3 specular = _LightColor0.rgb * _Specular.rgb * pow(saturate(dot(o.worldNormal, halfDir)), _Gloss);
                 // 最终颜色
-                fixed3 color = (ambient + diffuse + specular) * surfaceColor + flowColor;
+                fixed3 color = (ambient + diffuse + specular) * surfaceColor + flowColor * _FlowColor.rgb;
 
                 return fixed4(color, 1.0);
             }
             ENDCG
         }
     }
+
+    Fallback "Specular"
 }

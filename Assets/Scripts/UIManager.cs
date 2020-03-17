@@ -16,7 +16,8 @@ public class UIManager : MonoBehaviour{
     }
 
     public void StartGame(){
-        SceneManager.LoadScene("Game");
+        Globle.levelIndex = 0;
+        SceneManager.LoadScene("Loading");
     }
 
     public void ExitGame(){

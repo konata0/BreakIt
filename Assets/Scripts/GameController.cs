@@ -69,7 +69,7 @@ public class GameController : MonoBehaviour{
     public void clickWinOk(){
         if(Globle.levelIndex < Globle.levelData.Count - 1){
             Globle.levelIndex += 1;
-            SceneManager.LoadScene("Game");
+            SceneManager.LoadScene("Loading");
         }else{
             Globle.levelIndex = 0;
             SceneManager.LoadScene("Start");
