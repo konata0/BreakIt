@@ -7,7 +7,7 @@ using LitJson;
 
 public class Globle : MonoBehaviour{
     public static JsonData levelData;
-    public static int loadingDelay = 300;
+    public static int loadingDelay = 600;
     public static int row = 6;
     public static int col = 10;
     public static int levelIndex = 0;
